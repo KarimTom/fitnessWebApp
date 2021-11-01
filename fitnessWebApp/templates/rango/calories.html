@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rango</title>
+    </head>
+
+    <body>
+        <h1>Testing Food calories<br /> Welcome {{ user.username }}</h1>
+        <form id="calories track" method="post" action="{% url 'rango:calories' %}">
+            {% csrf_token %}
+            Meal: <input type="text" name="meal" value="" size="20" />
+            <br />
+            <input type="submit" name="submit" value="Enter" />
+        </form>
+        <a href="{% url 'rango:index' %}" class=footer>Home</a>
+    </body>
+</html>
