@@ -13,5 +13,24 @@
             <input type="submit" name="submit" value="Enter" />
         </form>
         <a href="{% url 'rango:index' %}" class=footer>Home</a>
+
+        {% if message %}
+            <h2> {{ message }}</h2>
+            <ul>
+                {% for food in food_suggested %}
+                    <li> {{ food }} </li> <br />
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="imageFile" />
+            <input type="submit" name="submit" value="Upload" />
+        </form>
+
+        {% if predictions %}
+            {{ predictions }}
+        {% endif %}
     </body>
 </html>

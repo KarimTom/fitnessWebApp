@@ -2,7 +2,18 @@
 <html>
     <head>
         <title>Rango</title>
+        <style>
+            h2, p{
+                margin: 10px 0;
+            }
+            header{
+                margin-bottom: 40px;
+            }
+        </style>
     </head>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
     <body>
         <h1>Testing <br /> Welcome {{ user.username }}</h1>
@@ -21,6 +32,19 @@
                     <li> {{ food.calorie_amount }} {{ food.food.name }}</li>
                 {% endfor %}
             {% endif %}
+        </div>
+        <div class="indigo">
+            <header class="indigo darken-1 section">
+                <p class="flow-text grey-text center text-lighten-2">Macro nutrients composition so far...</p>
+            </header>
+            <div class="canvas"></div>
+            <!-- Compiled and minified JavaScript -->
+            {% load static %}
+            <script src="https://d3js.org/d3.v5.js"></script>
+            <script> var data = {{ nutrients | safe }};  </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
+            <script src="{% static 'pie_chart.js' %}"></script> 
         </div>
         <hr />
             <div class=footer>

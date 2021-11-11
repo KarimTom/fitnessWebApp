@@ -7,8 +7,7 @@ from datetime import date
 from django.utils import timezone
 from django.db.models.fields import NullBooleanField
 
-##url = "https://edamam-edamam-nutrition-analysis.p.rapidapi.com/api/nutrition-data"
-url = "https://api.edamam.com/api/nutrition-data?app_id=c5cfcfef&app_key=9185b3aa75ac918cab425d8adc84e9a9&nutrition-type=loggin"
+url_nutrition_analysis = "https://api.edamam.com/api/nutrition-data?app_id=c5cfcfef&app_key=9185b3aa75ac918cab425d8adc84e9a9&nutrition-type=logging"
 headers = {
     'x-rapidapi-host': "edamam-edamam-nutrition-analysis.p.rapidapi.com",
     'x-rapidapi-key': "591f3078e9mshd96c922a6446c7bp1ff6c3jsn465809415fce"
@@ -28,6 +27,9 @@ class Profile(models.Model):
     person = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     food = models.ForeignKey(Food, on_delete=models.CASCADE, null=True, blank=True)
     meal = models.CharField(max_length=100, null=True)
+    carbs_consumed_day = models.PositiveIntegerField(default=0, null=True)   #< 50% of consumed calories is too little; >65% is too much
+    fats_consumed_day = models.PositiveIntegerField(default=0, null=True)    #< 30% of consumed calories is too little; >40% is too much
+    protein_consumed_day = models.PositiveIntegerField(default=0, null=True) #< 15% of consumed calories is too little; >25% is too much
     date_today = models.DateField(default=timezone.now)
     calorie_consumed_day = models.FloatField(default=0, null=True)
     calorie_of_meal = models.FloatField(default=0, null=True)
@@ -36,26 +38,36 @@ class Profile(models.Model):
     
     def save(self, *args, **kwargs):  
         print("Saving Profile")
-        ##self.food = Food.objects.get_or_create(name=self.meal, person=self.person)[0]
+
         if self.meal != None:
             print("Saving Profile")
-            ##print(self.food.name)
             if any(char.isdigit() for char in self.meal):
                 querystring = {"ingr": self.meal}
             else:
                 querystring = {"ingr": str("1 ") + self.meal}
-            ##self.calorie_of_meal = (self.food.calorie * self.quantity) / self.food.quantity
-            response = requests.request("GET", url, params=querystring).json()
-            self.calorie_of_meal = response['calories']
+
+            response = requests.request("GET", url_nutrition_analysis, params=querystring).json()
+            
             self.food = Food.objects.get_or_create(name=self.meal, person=self.person)[0]
+            self.calorie_of_meal = response['calories']
+            
             print(response)
             print(response['calories'])
-            print(response['totalNutrients']['ENERC_KCAL'])
-            print(response['totalNutrients']['PROCNT'])
+            print("Energy: " +str(response['totalNutrients']['ENERC_KCAL']))
+            print("Protein: " +str(response['totalNutrients']['PROCNT']))
+            print("Carbs: " +str(response['totalNutrients']['CHOCDF']))
+            print("Fat: " +str(response['totalNutrients']['FAT']))
+
+            self.carbs_consumed_day = self.carbs_consumed_day + response['totalNutrients']['CHOCDF']['quantity']
+            self.fats_consumed_day = self.fats_consumed_day + response['totalNutrients']['FAT']['quantity']
+            self.protein_consumed_day = self.protein_consumed_day + response['totalNutrients']['PROCNT']['quantity']
             self.calorie_consumed_day = self.calorie_of_meal + self.calorie_consumed_day
+            
+
             calories = Profile.objects.filter(person=self.person).last()
             PostFood.objects.create(profile=calories, food=self.food, calorie_amount=self.calorie_of_meal)
             self.food = None
+
             super(Profile, self).save(*args, **kwargs)
         else:
             super(Profile, self).save(*args,**kwargs)
