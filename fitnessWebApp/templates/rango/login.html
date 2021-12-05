@@ -1,18 +1,27 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Rango</title>
-    </head>
+{% extends 'rango/base.html' %}
+{% load static %}
 
-    <body>
-        <h1>Testing login</h1>
-        <form id="login_form" method="post" action="{% url 'rango:login' %}">
+{% block body_block %}
+    <div class="nav z-depth-0">
+        <div class="section center">
+            <h3 class="white-text center">- Log In -</h3>
+        </div>
+    </div>
+    
+    <div class="login-form centered">
+        <form class="login-class" id="login_form" method="post" action="{% url 'rango:login' %}">
             {% csrf_token %}
-            Username: <input type="text" name="username" value="" size="50" />
-            <br />
-            Password: <input type="password" name="password" value="" size="50" />
-            <br />
+            <span class="input-text"> Username:</span>
+            <input type="text" name="username" placeholder="Enter username" value="" size="50" />
+            <span class="input-text"> Password:</span>
+            <input type="password" name="password" value="" size="50" />
             <input type="submit" value="submit" />
         </form>
-    </body>
-</html>
+    </div>
+
+    <div class="login-back-button">
+        <div class="progress"> </div>
+        <a href="{% url 'rango:about' %}"><span class="centered">Back</span></a>
+    </div>
+
+{% endblock %}

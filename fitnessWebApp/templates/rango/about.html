@@ -1,0 +1,42 @@
+{% extends 'rango/base.html' %}
+{% load static %}
+
+{% block body_block %}
+    <div class="nav z-depth-0">
+        <div class="section center">
+            <h3 class="white-text center">- Human Diary for a Healthy Lifestyle -</h3>
+        </div>
+        <div class="progress"> </div>
+    </div>
+
+
+
+    <div class="intro">
+        <p class="paragraph"> This Website is used to <span class="highlighted-text">track </span> 
+                            your<span class="highlighted-text"> Calories</span> 
+                            and your <span class="highlighted-text"> Activities. </span>
+                            You will see <span class="highlighted-text">pie charts </span>
+                            describing your daily activities as well as macros taken during the day. 
+                            In addition,  you will have the chance to see a
+                            <span class="highlighted-text"> Weekly Report</span> 
+                            that grants you the chance for a better visualisation on your weekly consumed 
+                            macros in detail using a <span class="highlighted-text">user-interactive graph.</span>
+        </p> 
+    </div>
+
+    <div class="split left">
+        <div class="centered">
+        <a href="{% url 'rango:register' %}">Sign Up</a>
+        </div>
+    </div>
+    
+    <div class="split right">
+        <div class="centered">
+        <a href="{% url 'rango:login' %}">Login</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="progress"> </div>
+    </div>
+{% endblock %}

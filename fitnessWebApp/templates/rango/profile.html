@@ -1,0 +1,47 @@
+{% extends 'rango/base.html' %}
+{% load static %}
+
+{% block body_block %}
+    <div class="nav z-depth-0">
+        <div class="section center">
+            <div class="header">
+                <a href="{% url 'rango:index' %}"><span class="left">Home</span></a>
+                <a href="{% url 'rango:logout' %}"><span class="right">Log Out</span></a>
+            </div>
+            <h3 class="white-text center">- {{ user.username }} -</h3>
+        </div>
+    </div>
+
+        <div class="profile_display">
+            <span>Gender: <span class="info">{{ gender }}</span></span>
+            <span>BMR: <span class="info">{{ BMR }}</span></span>
+            <span>BMI: <span class="info">{{ BMI }}</span></span>
+        </div>
+
+        <div class="profile_edit">
+            <form class="profile_form" id="activity_post_form" method="post" action= "{% url 'rango:profile' %}">
+                <span>Age:</span>
+                <input type="text" placeholder={{ age }} name="age" id="age" size="10" />
+                <br />
+
+                <span>Weight:</span>
+                <input type="text" name="weight" id="weight" size="10" placeholder={{ weight }} />
+                <br />
+
+                <span>Height:</span>
+                <input type="text" name="height" id="height" size="10" placeholder={{ height }} />
+                <br />
+
+                <span>Goal:</span>
+                <select name="goal" id="goal">
+                    <option value="current">{{ goal }}</option>
+                    <option value="bulk">BULK</option>
+                    <option value="maintenance">MAINTENANCE</option>
+                    <option value="fat loss">FAT LOSS</option>
+                </select>
+                <br />
+
+                <input type="submit" name="submit" value="Edit" />
+            </form> 
+    </div>
+{% endblock %}

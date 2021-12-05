@@ -1,0 +1,40 @@
+{% extends 'rango/base.html' %}
+{% load static %}
+
+{% block body_block %}
+    <div class="nav z-depth-0">
+        <div class="section center">
+            <div class="report-header">
+                <a href="{% url 'rango:index' %}"><span class="left">Home</span></a>
+                <a href="{% url 'rango:logout' %}"><span class="right">Log Out</span></a>
+            </div>
+            <h3 class="white-text center">- Report -</h3>
+        </div>
+    </div>
+
+    <div class="section center">
+        <p class="grey-text flow-text">Macro tracking report for <span class="highlighted-text">{{ user.username }}</span>
+        </p>
+    </div>
+
+    <div class="container section">
+        <div class="row">
+            <div class="col s12 l5">
+                <button class="active" data-macro="calories">Calories</button>
+                <button data-macro="protein">Protein</button>
+                <button data-macro="carbs">Carbs</button>
+                <button data-macro="fat">Fat</button>
+            </div>
+            <div class="col s12 l6 push-l1">
+                <div class="canvas"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script>
+        var data = {{ records | safe }};
+    </script>
+    <script src="{% static 'js/user_choice_report.js' %}"></script>
+    <script src="{% static 'js/bar_chart_report.js' %}"></script>
+{% endblock %}

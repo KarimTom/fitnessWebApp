@@ -10,24 +10,25 @@ from tensorflow.python.keras.backend import set_session
 #init = tf.global_variables_initializer()
 #set_session(SESS)
 
-def get_session():
-    config = tf.ConfigProto()
-    config.gpu_options.allow_growth = True
-    return tf.Session(config=config)
+# def get_session():
+#      config = tf.ConfigProto()
+#      config.gpu_options.allow_growth = True
+#      return tf.Session(config=config)
 
-K.set_session(get_session())
+# K.set_session(get_session())
 
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-SESS = tf.Session(config=config)
+# config = tf.ConfigProto()
+# config.gpu_options.allow_growth = True
+# SESS = tf.Session(config=config)
 
-set_session(SESS)
-IMAGE_MODEL = vgg16.VGG16(weights="imagenet")
+# set_session(SESS)
+# IMAGE_MODEL = vgg16.VGG16(weights="imagenet")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static')
 MEDIA_DIR = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
@@ -139,7 +140,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [STATIC_DIR, ]
-STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static")
 
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'

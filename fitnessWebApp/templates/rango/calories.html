@@ -1,36 +1,101 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Rango</title>
-    </head>
+{% extends 'rango/base.html' %}
+{% load static %}
 
-    <body>
-        <h1>Testing Food calories<br /> Welcome {{ user.username }}</h1>
-        <form id="calories track" method="post" action="{% url 'rango:calories' %}">
+{% block body_block %}
+    <div class="nav z-depth-0">
+        <div class="section center">
+            <div class="header">
+                <a href="{% url 'rango:index' %}"><span class="left">Home</span></a>
+                <a href="{% url 'rango:logout' %}"><span class="right">Log Out</span></a>
+            </div>
+            <h3 class="white-text center">- Nutrition -</h3>
+        </div>
+    </div>
+
+    <div class="section center">
+        <p class="grey-text flow-text">Log your meal by <span class="highlighted-text">Text</span>
+                                       or <span class="highlighted-text">Photo. </span>
+                                       Your meal will be <span class="highlighted-text">Analysed</span> 
+                                       and you will get meal <span class="highlighted-text">suggestions</span>
+                                       based on the meal you have entered
+        </p>
+    </div>
+    
+    <div class="figures-pos-right right">
+        <div class="table-data" id="my-data">
+            <b><span class="table-text">Meals taken</span></b>
+            <table id="my-Table" border="1" cellpadding="2">
+                <thead>
+                    <tr>
+                        <th><b><span class="table-text">Meal</span></b></th>
+                        <th><b><span class="table-text">Protein</span></b></th>
+                        <th><b><span class="table-text">Carbs</span></b></th>
+                        <th><b><span class="table-text">Fat</span></b></th>
+                        </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="form-meal">
+        <form id="meal_input" method="post">
             {% csrf_token %}
-            Meal: <input type="text" name="meal" value="" size="20" />
-            <br />
+            <span class="input-text"> Meal: </span>
+            <input class="meal" placeholder="Example: 200 gr pasta" id="meal-input" type="text" name="meal" size="20" />
             <input type="submit" name="submit" value="Enter" />
         </form>
-        <a href="{% url 'rango:index' %}" class=footer>Home</a>
-
-        {% if message %}
-            <h2> {{ message }}</h2>
-            <ul>
-                {% for food in food_suggested %}
-                    <li> {{ food }} </li> <br />
-                {% endfor %}
-            </ul>
-        {% endif %}
-
+        <div id="edamam-badge" data-color="white"></div>
+    </div>
+        
+    <div class="form-meal-upload">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="file" name="imageFile" />
+            <span class="input-text">Upload image here:</span>
+            <input class="meal-upload" type="file" name="imageFile" />
             <input type="submit" name="submit" value="Upload" />
         </form>
+    </div>
 
-        {% if predictions %}
-            {{ predictions }}
-        {% endif %}
-    </body>
-</html>
+    <div class="meals-suggestions">
+        <div class="meal-name">
+            <span id ="last_meal_name" class="text">Last Meal:</span> 
+            <span id ="last_meal_name_value" class="highlighted-text"></span><br />
+            <span id="last_meal_status" class="text">Status:</span>
+            <span id ="last_meal_status_value" class="highlighted-text"></span>
+        </div>
+        <div class="figures-pos-left">
+            <div class="table-data" id="meal-suggest">
+                <b><span class="table-text">Suggestions</span></b>
+                <table id="meal-suggestions" border="1" cellpadding="2">
+                    <thead>
+                        <th><b><span class="table-text">Meal</span></b></th>
+                        <th><b><span class="table-text">Protein</span></b></th>
+                        <th><b><span class="table-text">Carbs</span></b></th>
+                        <th><b><span class="table-text">Fat</span></b></th>
+                        <th><b><span class="table-text">Quantity</span></b></th>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if meals %}
+        <script> var meals_taken = {{ meals | safe }};</script>
+    {% endif %}
+    {% if food_sug %}
+        <script> var meal_sug = {{ food_sug | safe }};</script>
+    {% endif %}
+    {% if last_meal %}
+        <script> var last_meal = {{ last_meal | safe }}; 
+                 var protein_flag = {{ high_protein_flag | safe }};
+                 var carb_flag = {{ high_carb_flag }};
+                 var fat_flag = {{ high_fat_flag }};
+        </script>
+    {% endif %}
+    <script src="{% static 'js/table.js' %}"></script>
+    <script src = "{% static 'js/table_ajax.js' %}"></script> 
+    
+    
+              
+{% endblock %}

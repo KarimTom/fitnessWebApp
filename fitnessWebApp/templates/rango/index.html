@@ -1,60 +1,50 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Rango</title>
-        <style>
-            h2, p{
-                margin: 10px 0;
-            }
-            header{
-                margin-bottom: 40px;
-            }
-        </style>
-    </head>
+{% extends 'rango/base.html' %}
+{% load static %}
 
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+{% block body_block %}
+    <div class="nav z-depth-0">
+        <div class="section center">
+            <h3 class="white-text center">- Welcome {{ user.username }} -</h3>
+        </div>
+    </div>
 
-    <body>
-        <h1>Testing <br /> Welcome {{ user.username }}</h1>
-        <div>
-            <a href="{% url 'rango:BMI' %}">Fat Percentage</a>
-            <a href="{% url 'rango:exercises' %}">Exercises</a>
-            <a href="{% url 'rango:workout' %}">Workout</a>
-            <a href="{% url 'rango:calories' %}">Calories</a> <br />
-            {% if user.is_authenticated %}
-                <a href="{% url 'rango:add_category' %}">add category</a>
-            {% endif %}
+    <div class="progress"></div>
+        {% comment %}    
+        <li><a href="{% url 'rango:BMI' %}">Fat Percentage</a></li> 
+        <li><a href="{% url 'rango:workout' %}">Workout</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'rango:add_category' %}">add category</a></li>
+        {% endif %}
+        {% endcomment %}
+        <li><a href="{% url 'rango:exercises' %}">Activities</a></li>
+        <li><a href="{% url 'rango:calories' %}">Nutrition</a></li>
+        <li><a href="{% url 'rango:report' %}">Report</a><br /></li>
+       
+    <div class="titles">
+        <span class="center-title left">Macros</span>
+        <span class="center-title right">Calories</span>
+    </div>
+
+    <div class="canvas-pos-left left">
+        <div class="canvas"></div>
+    </div>
+    <div class="canvas-pos-right right">
+        <div class="canvas-bar"></div>
+    </div>
+        
+        <script> var macros = {{ nutrients_info | safe }};  
+                 var calories = {{ calories_info | safe }};
+                 var activities = {{ activities_info | safe}};
+        </script>
+        <script src="{% static 'js/pie_chart_calories.js' %}"></script> 
+        <script src="{% static 'js/calorie_bar.js' %}"></script>
+    </div>
+    
+        <div class="footer">
+            <div class="progress"> </div>
+            <ul>
+                <li class=footer><a href="{% url 'rango:profile' %}" class=footer>Profile</a></li>
+                <li class=footer><a href="{% url 'rango:logout' %}" class=footer>Logout</a></li>         
+            </ul>
         </div>
-        <div>
-            {% if all_food_today %}
-                {% for food in all_food_today %}
-                    <li> {{ food.calorie_amount }} {{ food.food.name }}</li>
-                {% endfor %}
-            {% endif %}
-        </div>
-        <div class="indigo">
-            <header class="indigo darken-1 section">
-                <p class="flow-text grey-text center text-lighten-2">Macro nutrients composition so far...</p>
-            </header>
-            <div class="canvas"></div>
-            <!-- Compiled and minified JavaScript -->
-            {% load static %}
-            <script src="https://d3js.org/d3.v5.js"></script>
-            <script> var data = {{ nutrients | safe }};  </script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
-            <script src="{% static 'pie_chart.js' %}"></script> 
-        </div>
-        <hr />
-            <div class=footer>
-                <ul>
-                    <li class=footer><a href="{% url 'rango:profile' %}" class=footer>Profile</a></li>
-                    <li class=footer><a href="{% url 'rango:logout' %}" class=footer>Logout</a></li>         
-                    <li class=footer><a href="{% url 'rango:register' %}" class=footer>Sign Up</a></li>
-                    <li class=footer><a href="{% url 'rango:login' %}" class=footer>Login</a></li>
-                    <li class=footer><a href="{% url 'rango:index' %}" class=footer>Home</a></li>
-                </ul>
-            </div>
-    </body>
-</html>
+{% endblock %}

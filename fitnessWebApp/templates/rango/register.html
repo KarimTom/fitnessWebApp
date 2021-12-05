@@ -1,26 +1,42 @@
-<!DOCTYPE html>
-<html>
+{% extends 'rango/base.html'  %}
+{% load static %}
 
-    <head>
-        <title>Rango</title>
-    </head>
-
-    <body>
-        <h1>Testing register</h1>
-        {% if registered %}
-        Rango says: <strong> Thank you for registering! </strong>
-        <a href="{% url 'rango:index' %}">Return to the homepage.</a><br />
-        {% else %}
-        Rango says: <strong> Register here! </strong><br />
-        <form id="user_form" method="post" action="{% url 'rango:register' %}">
-    
-        {% csrf_token %}
-        {{ user_form.as_p }}
-        {{ profile_form.as_p }}
-        {{ user_profile_form.as_p }}
-
-        <input type="submit" name="submit" value="Register" />
-        </form>
-        {% endif %}
-    </body>
-</html>
+{% block body_block %}
+    <div class="nav z-depth-0">
+        <div class="section center">
+            <h3 class="white-text center">- Register -</h3>
+        </div>
+    </div>
+    {% if registered %}
+        <p class="grey-text flow-text">Thank you for Registering!<br />
+                                    Your Age: <span class="highlighted-text">{{ info.age }}<br /></span>
+                                    Your Weight: <span class="highlighted-text">{{ info.weight }}<br /></span>
+                                    Your Height: <span class="highlighted-text">{{ info.height }}<br /></span>
+                                    Daily Calorie Goal: <span class="highlighted-text">{{ info.calorie_goal }}<br /></span>
+                                    Your BMI: <span class="highlighted-text">{{ info.BMI }}<br /></span>
+                                    Your BMR: <span class="highlighted-text">{{ info.BMR }}<br /></span>
+                                    You can Always log in and go to <span class="highlighted-text">Profile</span>
+                                    where you can edit your information entered. <br />
+        </p>
+        <div class="login-back-button">
+            <div class="progress"> </div>
+            <a href="{% url 'rango:about' %}"><span class="centered">Return to homepage</span></a>
+        </div>
+    {% else %}
+        <div class="sign-up register-split left">
+            <form id="user_form" method="post" action="{% url 'rango:register' %}">
+                {% csrf_token %}
+                {{ user_form.as_p }} {{ profile_form.as_p }}
+                <input type="submit" name="submit" value="Register" />
+            </div>
+                <div class="sign-up register-split register-right">
+                    {{ user_profile_form.as_p }}
+                </div>
+            </form>
+        </div>
+        <div class="login-back-button">
+            <div class="progress"> </div>
+            <a href="{% url 'rango:about' %}"><span class="centered">Back</span></a>
+        </div>
+    {% endif %}
+{% endblock %}

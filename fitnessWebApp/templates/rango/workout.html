@@ -7,13 +7,13 @@
     <body>
         <h1> Testing exercises page </h1>
         {% if user.is_authenticated %}
-        {% if categories %}
-            <ul>
-                {% for category in categories %}
-                    <li><a href="{% url 'rango:user_category' category.slug %}">{{ category }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
+            {% if categories %}
+                <ul>
+                    {% for category in categories %}
+                        <li><a href="{% url 'rango:user_category' category.slug %}">{{ category }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
             <Strong> There are no categories present. </Strong>
         {% endif %}
         {% endif %}
