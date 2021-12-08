@@ -14,7 +14,9 @@
 
     <div class="section center">
         <p class="grey-text flow-text">Log your activity by filling the form <span class="highlighted-text">OR</span>
-                                       search directly in our database
+                                       search directly in our database<br />
+                                       If you are a beginner user of <span class="highlighted-text">MyFitDiary </span>
+                                       fill out the form on the left
         </p>
     </div>
     
@@ -39,6 +41,11 @@
             {% endif %}
         </div>
     </div>
+    {% if error %}
+        <div class="error">
+            <p class="paragraph center">{{ error }}</p>
+        </div>
+    {% endif %}
     <div class="figure center"></div>
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">

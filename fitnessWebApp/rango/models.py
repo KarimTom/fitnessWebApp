@@ -58,15 +58,6 @@ class Activities(models.Model):
     def __str__(self):
         return self.api_description
 
-class Video(models.Model):
-    TITLE_MAX_LENGTH = 300
-    URL_MAX_LENGTH = 200
-
-    title = models.CharField(max_length=TITLE_MAX_LENGTH, unique=True)
-    url = models.URLField()
-
-    def __str__(self):
-        return self.title
 
 class UserProfile(models.Model):
     GENDER_CHOICES = (
@@ -88,7 +79,6 @@ class UserProfile(models.Model):
     weight = models.PositiveIntegerField(null=False, default = 0)
     height = models.PositiveIntegerField(null=False, default = 0)
     BMI = models.DecimalField(null=True, max_digits=5, decimal_places=2)
-    video = models.ManyToManyField(Video, default=None, blank=True)
 
     def save(self, *args, **kwargs):
         print("Saving user profile")
@@ -98,23 +88,6 @@ class UserProfile(models.Model):
         else:
             super(UserProfile, self).save(*args,**kwargs)
 
-class Category(models.Model):
-    NAME_MAX_LENGTH = 128
-
-    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=True)
-    slug = models.SlugField(unique=True)
-    videos = models.ManyToManyField(Video, default=None, blank=True)
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        self.full_clean()
-        super(Category, self).save(*args, **kwargs)
-
-    class Meta:
-        verbose_name_plural = 'Categories'
-
-    def __str__(self):
-        return self.name
 
 class Profile_activity(models.Model):
     person = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
@@ -137,7 +110,8 @@ class Profile_activity(models.Model):
 
             self.calorie_burned += self.calorie_burned + int(cal_burned)
             self.cal_unit = 'calorie'
-
+            print('description is:')
+            print(self.description)
             calories = Profile_activity.objects.filter(person=self.person).last()
             PostActivities.objects.create(profile=calories, activities=self.activity \
                                          ,calorie_amount=cal_burned, description=self.description \

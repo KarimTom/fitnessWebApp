@@ -15,6 +15,7 @@ if ((typeof(meal_sug) !== "undefined")){
             protein.innerHTML = "<span class=table-text>"+meal_sug[i].Protein; +"</span>"
             carbs.innerHTML = "<span class=table-text>"+meal_sug[i].Carbs; +"</span>"
             fat.innerHTML = "<span class=table-text>"+meal_sug[i].Fat; +"</span>"
+            quantity.innerHTML = "<span class=table-text>"+"100 gr";+"</span>"
                 
             table_sug.appendChild(newRow);
     }

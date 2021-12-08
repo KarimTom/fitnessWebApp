@@ -10,19 +10,19 @@ from tensorflow.python.keras.backend import set_session
 #init = tf.global_variables_initializer()
 #set_session(SESS)
 
-# def get_session():
-#      config = tf.ConfigProto()
-#      config.gpu_options.allow_growth = True
-#      return tf.Session(config=config)
+def get_session():
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    return tf.Session(config=config)
 
-# K.set_session(get_session())
+K.set_session(get_session())
 
-# config = tf.ConfigProto()
-# config.gpu_options.allow_growth = True
-# SESS = tf.Session(config=config)
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+SESS = tf.Session(config=config)
 
-# set_session(SESS)
-# IMAGE_MODEL = vgg16.VGG16(weights="imagenet")
+set_session(SESS)
+IMAGE_MODEL = vgg16.VGG16(weights="imagenet")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -52,8 +52,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rango',
 ]
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

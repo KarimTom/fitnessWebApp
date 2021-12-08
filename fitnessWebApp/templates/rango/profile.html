@@ -13,23 +13,23 @@
     </div>
 
         <div class="profile_display">
-            <span>Gender: <span class="info">{{ gender }}</span></span>
-            <span>BMR: <span class="info">{{ BMR }}</span></span>
-            <span>BMI: <span class="info">{{ BMI }}</span></span>
+             <span class="info">Gender: {{ gender }}</span></span>
+             <span class="info">BMR: {{ BMR }}</span></span>
+             <span class="info">BMI: {{ BMI }}</span></span>
         </div>
 
         <div class="profile_edit">
             <form class="profile_form" id="activity_post_form" method="post" action= "{% url 'rango:profile' %}">
                 <span>Age:</span>
-                <input type="text" placeholder={{ age }} name="age" id="age" size="10" />
+                <input type="number" placeholder={{ age }} name="age" id="age" size="10" />
                 <br />
 
                 <span>Weight:</span>
-                <input type="text" name="weight" id="weight" size="10" placeholder={{ weight }} />
+                <input type="number" name="weight" id="weight" size="10" placeholder={{ weight }} />
                 <br />
 
                 <span>Height:</span>
-                <input type="text" name="height" id="height" size="10" placeholder={{ height }} />
+                <input type="number" name="height" id="height" size="10" placeholder={{ height }} />
                 <br />
 
                 <span>Goal:</span>

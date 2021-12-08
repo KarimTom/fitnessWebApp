@@ -359,9 +359,8 @@
                 color: #ccc !important;
             }
             .profile_display span.info{
-                display: inline-block !important;
+                display: block !important;
                 text-align:left !important;
-                width: 95% !important;
                 color:#ccc !important;
             }
             .profile_edit {
@@ -369,7 +368,7 @@
                 top: inherit;
                 margin-top: 10px !important;
             }
-            .profile_edit .profile_form input[type=text], .profile_form select{
+            .profile_edit .profile_form input[type=number], .profile_form select{
                 display: inline-block !important;
                 width:10% !important;
                 height: 20% !important;
@@ -379,19 +378,19 @@
                 margin-bottom:10px;
             }
 
-            .profile_edit .profile_form input[type=text]::placeholder {
+            .profile_edit .profile_form input[type=number]::placeholder {
                 color: #333 !important;
                 font-size: 1.0em !important;
                 font-style: italic !important;
                 transition: color 0.3s ease !important;
             }
-            .profile_edit .profile_form input[type=text]:hover::placeholder{
+            .profile_edit .profile_form iinput[type=number]:hover::placeholder{
                 color:transparent !important;
             }
-            .profile_edit .profile_form input[type=text]:focus::placeholder{
+            .profile_edit .profile_form input[type=number]:focus::placeholder{
                 color:transparent;
             }
-            .profile_edit .profile_form input[type=text]::placeholder{
+            .profile_edit .profile_form input[type=number]::placeholder{
                 color:#ccc;
                 transition: color 0.3s ease;
             }
@@ -411,6 +410,13 @@
                 width:40%;
                 text-align: center;
                 overflow-y: auto;
+            }
+
+            .error p.paragraph{
+                margin-top:20px;
+                margin-bottom:50px;
+                font-size:large;
+                color:#ccc;
             }
 
         </style>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from rango.models import Food, PostActivities, Profile_food, Profile_activity, PostFood, Category, UserProfile, Video, ActivityCategory, Activities
+from rango.models import Food, PostActivities, Profile_food, Profile_activity, PostFood, UserProfile, ActivityCategory, Activities
 
 class Profile_foodAdmin(admin.ModelAdmin):
      list_display = ('person', 'calorie_consumed_day', 'date_today',)
@@ -9,8 +9,6 @@ class Profile_activityAdmin(admin.ModelAdmin):
      list_display = ('person', 'calorie_burned', 'date_today',)
      readonly_field = ('date',)
 
-class CategoryAdmin(admin.ModelAdmin):
-     prepopulated_fields = {'slug':('name',)}
 
 class UserProfileAdmin(admin.ModelAdmin):
      list_display = ('user', 'weight', 'height', 'BMI',)
@@ -24,9 +22,7 @@ class ActivitiesCategoryAdmin(admin.ModelAdmin):
 admin.site.register(Profile_food, Profile_foodAdmin)
 admin.site.register(Profile_activity, Profile_activityAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
-admin.site.register(Category, CategoryAdmin)
 admin.site.register(Food)
-admin.site.register(Video)
 admin.site.register(PostFood)
 admin.site.register(PostActivities)
 admin.site.register(ActivityCategory, ActivityCategoryAdmin)

@@ -8,8 +8,8 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from rango.models import Activities, ActivityCategory, Food, Profile_food, Profile_activity, PostFood, UserProfile, Category, Video, PostActivities
-from rango.forms import ChosenVideoForm, UserForm, UserProfileForm, ProfileForm, CategoryForm, VideoForm, SelectExerciseForm, SelectExerciseSearchForm
+from rango.models import Activities, ActivityCategory, Food, Profile_food, Profile_activity, PostFood, UserProfile, PostActivities
+from rango.forms import UserForm, UserProfileForm, ProfileForm, SelectExerciseForm, SelectExerciseSearchForm
 from django.utils import timezone
 from datetime import date, datetime, timedelta
 from django.db import connections
@@ -182,11 +182,11 @@ def register(request):
             if request.POST['calorie_goal'] == '0' or request.POST['calorie_goal'] == '':
                 print('we are here')
                 if request.POST['goal'] == 'bulk':
-                    cal_goal = BMR + (0.20 * BMR)
+                    cal_goal = BMR + (0.15 * BMR)
                 elif request.POST['goal'] == 'maintenance':
-                    cal_goal = BMR + (0.05 * BMR)
+                    cal_goal = BMR
                 else:
-                    cal_goal = BMR - (0.10 * BMR)
+                    cal_goal = BMR - 500
 
                 profile_food.calorie_goal = cal_goal
             profile_food.save()
@@ -268,31 +268,57 @@ def profile(request):
 
     return render(request, 'rango/profile.html', context=context_dict)
 
+bad_input_error_exercises = False
+
+def get_activity_suggestions(calorie_surplus, weight):
+    #for fat loss -> get the met value of activities that burns (500 - calorie_goal - calorie_consumed_day) in a interval of 30 to 90 mins
+    #for maintenance -> get the met value of activities that burns calories surplus in a interval of 30 to 90 mins
+    #for bulk -> only get the met value of activities that burns calorie surplus in a interval of 30 to 90 mins
+    time_min = [30, 45, 60, 75, 90]
+    met_value = []
+    met_time = {}
+
+    activities = ['running', 'bicycling', 'sports']
+    activities_models = ActivityCategory.objects.filter(name__in =activities) \
+                            .values('id', 'name')
+    id_activities_models = []
+    for activity_model in activities_models:
+        id_activities_models.append(activity_model['id'])
+
+    for time in time_min:
+        met_calculated = int( (calorie_surplus * 200) / (weight * 3.5 * time) )
+        met_value.append(met_calculated)
+        met_time[met_calculated] = time
+    
+    print(met_time)
+
+    activities_fetched = Activities.objects.filter(activity_category__in=id_activities_models, met_value__in=met_value) \
+                            .values('api_description', 'activity_category', 'met_value')
+    suggestions = []
+
+    for activity in activities_fetched:
+        dict = {'activity': activity['api_description'],
+                'category': activity['activity_category'],
+                'MET': activity['met_value'],
+                'Time': met_time[activity['met_value']],
+                'Calories_burned': calorie_surplus
+            }
+        print(dict)
+        suggestions.append(dict)
+            
+    #go to databse -> fetch activities with selected met values randomly and display them (5 activities suggestion distributed over interval)
+    return suggestions
 
 def exercises(request):
     context_dict = {}
 
-    category_list = Category.objects.all()
-    context_dict['categories'] = category_list
-
     loggedInUser_activity = Profile_activity.objects.filter(person=request.user).last()
+    loggedInUser_food = Profile_food.objects.filter(person=request.user).last()
+    loggedInUser_profile = UserProfile.objects.get(user=request.user)
     if request.user.is_authenticated:
-        video_add_form = VideoForm()
         activity_add_form = SelectExerciseForm()
         activity_search_add_form = SelectExerciseSearchForm()
-        if request.method == 'POST':
-            form = VideoForm(request.POST)
-            if form.is_valid:
-                saved_video = form.save()
-                types = str(request.POST.get('categories'))
-                list_of_categories = types.split(', ')
-                video = Video.objects.get_or_create(title=saved_video)[0]
-                for category in list_of_categories:
-                    cat = Category.objects.get_or_create(name=category)[0]
-                    print(str(cat.name) + " , " + str(cat.id))
-                    cat.videos.add(video)
 
-        context_dict['videoForm'] = video_add_form
         context_dict['ActivityForm'] = activity_add_form
         context_dict['ActivitySearchForm'] = activity_search_add_form
 
@@ -300,7 +326,9 @@ def exercises(request):
         activities = PostActivities.objects.filter(profile=loggedInUser_activity) \
             .values('description', 'calorie_amount', 'calorie_unit', 'time_min')
 
+        calorie_burned = 0
         for each_activity in activities:
+            calorie_burned = calorie_burned + each_activity['calorie_amount']
             dict = {'name': each_activity['description'], 'calorie_burned': int(each_activity['calorie_amount']),
                     'unit': each_activity['calorie_unit'], 'duration': each_activity['time_min']}
             li_activities.append(dict)
@@ -308,96 +336,47 @@ def exercises(request):
         activities_json = json.dumps(li_activities)
         context_dict['activities_info'] = activities_json
 
-    return render(request, 'rango/exercises.html', context=context_dict)
+        user_fitness_goal = loggedInUser_profile.goal
+        calorie_goal = loggedInUser_food.calorie_goal
+        calorie_consumed_day = loggedInUser_food.calorie_consumed_day
+        user_weight = loggedInUser_profile.weight
+        user_BMR = loggedInUser_profile.BMR
 
+        if user_fitness_goal == 'FAT LOSS':
 
-def show_category(request, category_name_slug):
-    context_dict = {}
-    form = ChosenVideoForm
-    try:
+            if calorie_goal > user_BMR - 500:
+                calorie_surplus = calorie_goal - (user_BMR - 500)
+            if calorie_goal - calorie_consumed_day < 0:
+                calorie_surplus = calorie_surplus + (calorie_consumed_day - calorie_goal)
 
-        category = Category.objects.get(slug=category_name_slug)
-        all_videos = category.videos.all()
-        print(all_videos)
-        context_dict['category'] = category
-        context_dict['videos'] = all_videos
-        context_dict['form'] = form
-    except Category.DoesNotExist:
-        context_dict['category'] = None
-        context_dict['videos'] = None
-        context_dict['form'] = None
+            activity_suggestions = get_activity_suggestions(calorie_surplus, user_weight)
+        elif user_fitness_goal == 'MAINTENANCE':  
 
-    return render(request, 'rango/category.html', context=context_dict)
+            if calorie_goal > user_BMR:
+                calorie_surplus = calorie_goal - user_BMR
+            if calorie_goal - calorie_consumed_day < 0:
+                calorie_surplus = calorie_surplus + (calorie_consumed_day - calorie_goal)
 
-def workout(request):
-    context_dict = {}
-
-    loggedInUser = UserProfile.objects.get_or_create(user=request.user)[0]
-    cats = Category.objects.all()
-
-    if request.method == 'POST':
-        user_video_add = Video.objects.get_or_create(
-            id=request.POST.get('videoId'))[0]
-        print(user_video_add.title)
-        print(request.POST.get('videoId'))
-        loggedInUser.video.add(user_video_add)
-
-    all_videos = loggedInUser.video.all()
-    print(all_videos)
-
-    category_list = []
-    for category in cats:
-        print("checking category " + category.name)
-        category_all_videos = category.videos.all()
-        for category_video in category_all_videos:
-            for user_video_added in all_videos:
-                print(str(category_video.title) +
-                      " , " + str(user_video_added.title))
-                if category_video.title == user_video_added.title:
-                    print("Validated")
-                    category_list.append(category)
-
-    context_dict['categories'] = category_list
-    print(context_dict['categories'])
-
-    return render(request, 'rango/workout.html', context=context_dict)
-
-
-def user_category(request, category_name_slug):
-    context_dict = {}
-
-    loggedInUser = UserProfile.objects.get_or_create(user=request.user)[0]
-    print(category_name_slug)
-    category = Category.objects.get(slug=category_name_slug)
-    vids_category = category.videos.all()  # videos of this category
-
-    vids_user = loggedInUser.video.all()  # videos of the user
-
-    # logged in user with videos in videos of this category
-    vids_list = []
-    for v_c in vids_category:
-        for v_u in vids_user:
-            if v_u.id == v_c.id:
-                vids_list.append(v_u)
-
-    context_dict['videos'] = vids_list
-    context_dict['category'] = category
-    return render(request, 'rango/user_category.html', context=context_dict)
-
-
-@login_required
-def add_category(request):
-    form = CategoryForm()
-
-    if request.method == 'POST':
-        form = CategoryForm(request.POST)
-        print(request.POST)
-        if form.is_valid():
-            form.save(commit=True)
-            return redirect(reverse('rango:index'))
+            activity_suggestions = get_activity_suggestions(calorie_surplus, user_weight)
         else:
-            print(form.errors)
-    return render(request, 'rango/add_category.html', {'form': form})
+
+            if calorie_goal > user_BMR + (0.15 * user_BMR):
+                calorie_surplus = calorie_goal - (user_BMR + 500)
+            if calorie_goal - calorie_consumed_day < 0:
+                calorie_surplus = calorie_surplus + (calorie_consumed_day - calorie_goal)
+
+            activity_suggestions = get_activity_suggestions(calorie_surplus, user_weight)
+
+        if activity_suggestions:
+            print(activity_suggestions)
+
+        global bad_input_error_exercises
+        print(bad_input_error_exercises)
+        if bad_input_error_exercises == True:
+            context_dict['error'] = 'That doesn''t seem right! Try filling out the form on the left'
+            bad_input_error_exercises = False
+            
+    return render(request, 'rango/exercises.html', context=context_dict)
 
 ##import tensorflow as tf
 ##from keras.models import load_model
@@ -419,7 +398,7 @@ def add_category(request):
 #         model = load_model('./models/vgg16_weights_tf_dim_ordering_tf_kernels.h5')
 
 
-def get_suggestion(calories, 
+def get_food_suggestions(calories, 
                    high_protein_flag, high_carb_flag, high_fat_flag,
                    max_protein_perc, max_carb_perc, max_fat_perc,
                    min_protein_perc, min_carb_perc, min_fat_perc):
@@ -686,10 +665,10 @@ def calories(request):
 
             print("High Flag is the excess percentage with respect to max allowed percentage")
 
-            list_sugg = get_suggestion(calories, 
-                                       high_protein_flag, high_carb_flag, high_fat_flag,
-                                       max_protein_perc, max_carb_perc, max_fat_perc,
-                                       min_protein_perc, min_carb_perc, min_fat_perc)
+            list_sugg = get_food_suggestions(calories, 
+                                             high_protein_flag, high_carb_flag, high_fat_flag,
+                                             max_protein_perc, max_carb_perc, max_fat_perc,
+                                             min_protein_perc, min_carb_perc, min_fat_perc)
             context_dict['food_sug'] = list_sugg
 
         dict_list = []
@@ -775,14 +754,22 @@ def activity_process(request):
         activity_selected = ActivityCategory.objects.get(id=request.POST['activity_category'])
         activity_overall= Activities.objects.get(activity_category=activity_selected, api_description=request.POST['Intensity_estimator'])
     except MultiValueDictKeyError:
-        activity_overall = Activities.objects.get(api_description=request.POST['api_description'])
+        try:
+            activity_overall = Activities.objects.get(api_description=request.POST['api_description'])
+        except Activities.DoesNotExist:
+            global bad_input_error_exercises
+            bad_input_error_exercises = True
+            return redirect(reverse('rango:exercises'))
 
     time_in_min = request.POST['Time_in_min']
     description = request.POST['Description']
 
     loggedInUser_activity.activity = activity_overall
     loggedInUser_activity.time_min = int(float(time_in_min))
-    loggedInUser_activity.description = description
+    if description != '':
+        loggedInUser_activity.description = description
+    else:
+        loggedInUser_activity.description = 'No description provided'
 
     loggedInUser_activity.save()
     return redirect(reverse('rango:exercises'))
@@ -801,11 +788,15 @@ def meal_process(request):
         print('we are here')
         print(request.POST)
         meal = request.POST['name']
-   
+
         profile = Profile_food.objects.filter(person=request.user).last()
         profile.meal = meal
         #profile.quantity = 'gr'
-        profile.save()
+        try:
+            profile.save()
+        except KeyError:
+            dict = {'error': 'That doesn''t seem right! Please check the meal again'}
+            return JsonResponse(dict, safe=False)
         
         last_meal = PostFood.objects.filter(profile=loggedInUser).last()
         calories = last_meal.food.calorie
@@ -857,10 +848,10 @@ def meal_process(request):
             
         print("High Flag is the excess percentage with respect to max allowed percentage")
 
-        list_sugg = get_suggestion(calories, 
-                                   high_protein_flag, high_carb_flag, high_fat_flag,
-                                   max_protein_perc, max_carb_perc, max_fat_perc,
-                                   min_protein_perc, min_carb_perc, min_fat_perc)
+        list_sugg = get_food_suggestions(calories, 
+                                         high_protein_flag, high_carb_flag, high_fat_flag,
+                                         max_protein_perc, max_carb_perc, max_fat_perc,
+                                         min_protein_perc, min_carb_perc, min_fat_perc)
 
         res = {
                 'last_meal': { 'name': last_meal.food.name  \
