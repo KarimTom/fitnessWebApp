@@ -2,7 +2,7 @@ console.log(activities);
 
 const pie_dims = { height: 300, width: 400, radius: 150 }; 
 const pie_cent = { x: (pie_dims.width / 2 + 5), y: (pie_dims.height / 2 + 5)};
-const svg_space_width = 350;
+const svg_space_width = 400;
 const svg_space_height = 150;
 const legendRectSize = 18;                                  
 const legendSpacing = 5;

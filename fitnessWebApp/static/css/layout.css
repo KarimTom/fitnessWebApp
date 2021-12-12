@@ -1,0 +1,476 @@
+h2,
+p {
+  margin: 0px 0;
+}
+header {
+  margin-bottom: 40px;
+}
+label {
+  font-size: x-large !important;
+  color: #808080 !important;
+}
+text {
+  font-size: large !important;
+  color: #ccc;
+}
+
+button {
+  background: #333 !important;
+  margin-bottom: 20px !important;
+  width: 100%;
+  padding: 16px;
+  font-size: 1.6em;
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button.active {
+  background: #003fbd !important;
+}
+
+.x-axis path,
+.y-axis path,
+.x-axis line,
+.y-axis line {
+  stroke: #ccc;
+}
+.x-axis text,
+.y-axis text {
+  fill: #ccc;
+  font-size: 14px;
+}
+
+.nav {
+  background: #333;
+}
+
+.split {
+  height: 125%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.left {
+  left: 5%;
+}
+.right {
+  right: 5%;
+}
+
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+form input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  background-color: #00bfa5;
+  border: none;
+  color: #ccc;
+  padding: 10px 15px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+li {
+  margin: 20px;
+  list-style-type: none;
+  display: inline-block;
+}
+
+a:link {
+  color: #14a0ca;
+  font-size: xx-large;
+}
+
+.report-header span {
+  color: #14ccc9;
+  font-size: xx-large;
+}
+.report-header span.left {
+  margin-top: 25px !important;
+  margin-left: 2% !important;
+}
+.report-header span.right {
+  margin-top: 25px !important;
+  margin-right: 5% !important;
+}
+
+a:hover {
+  color: #00bfa5;
+}
+table,
+th,
+td {
+  width: 95% !important;
+  padding: 4px !important;
+  font: 17px Calibri;
+  border-collapse: collapse !important;
+  text-align: center !important;
+  border-bottom: solid 1px #00bfa5 !important;
+}
+th {
+  padding: 4px 35px !important;
+  font-weight: bold;
+}
+
+.canvas {
+  margin-top: 40px;
+}
+
+span.highlighted-text {
+  color: #00bfa5 !important;
+  font-size: x-large;
+}
+.intro,
+.meal-name span.highlighted-text {
+  color: #00bfa5 !important;
+  font-size: large !important;
+}
+.intro p.paragraph {
+  color: #808080;
+  font-size: 20px;
+}
+
+.titles span.right-title {
+  margin-top: 40px !important;
+  margin-right: 25% !important;
+  color: #ccc !important;
+  font-size: xx-large !important;
+  float: right !important;
+}
+.titles span.left-title {
+  margin-top: 40px !important;
+  margin-left: 100px !important;
+  color: #ccc !important;
+  font-size: xx-large !important;
+  float: left !important;
+}
+.titles span.center-title {
+  display: block !important;
+  margin-top: 40px !important;
+  margin-left: 15% !important;
+  margin-right: -5% !important;
+  color: #ccc !important;
+  font-size: xx-large !important;
+  width: 30% !important;
+}
+
+.header span.left {
+  margin-top: 25px !important;
+  margin-left: 2% !important;
+}
+.header span.right {
+  margin-top: 25px !important;
+  margin-right: 5% !important;
+}
+
+.form-meal {
+  margin-top: 20px;
+}
+.form-meal,
+.form-meal-upload span.input-text {
+  font-size: x-large !important;
+  color: #ccc !important;
+}
+.form-meal form input[type="text"].meal {
+  display: block;
+  width: 20% !important;
+  height: 20% !important;
+  background-color: #ccc !important;
+  border-radius: 4px !important;
+  border: 2px solid #00bfa5 !important;
+}
+.form-meal form input[type="text"].meal::placeholder {
+  color: #333;
+  font-size: 1em;
+  font-style: italic;
+  transition: color 0.3s ease;
+}
+.form-meal form input[type="text"]:focus::placeholder {
+  color: transparent;
+}
+.form-meal form input[type="text"]::placeholder {
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.form-meal-upload {
+  margin-top: 50px;
+}
+.form-meal-upload form input[type="file"].meal-upload {
+  display: block;
+  background-color: #ccc;
+  color: #333;
+}
+
+.canvas-pos-left {
+  display: inline-block;
+  position: relative;
+  top: inherit;
+  width: 45%;
+}
+
+.figures-pos-right {
+  top: inherit;
+  height: 100%;
+  width: 50%;
+  position: relative;
+  z-index: 1;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+.table-data {
+  position: relative;
+  left: inherit;
+  text-align: center;
+  overflow-y: auto;
+}
+.table-data span.table-text {
+  text-align: center !important;
+  font-size: large !important;
+  color: #ccc !important;
+}
+
+.login-back-button {
+  position: absolute;
+  bottom: 50px;
+  width: 100%;
+}
+.login-back-button .progress {
+  margin-bottom: 50px;
+}
+.login-form form input[type="text"],
+input[type="password"] {
+  margin-bottom: 20px !important;
+  margin-top: 20px !important;
+  display: block;
+  width: 100% !important;
+  height: 1% !important;
+  background-color: #ccc !important;
+  border-radius: 4px !important;
+  border: 2px solid #00bfa5 !important;
+}
+.login-class input[type="password"] {
+  margin-bottom: 20px !important;
+  margin-top: 20px !important;
+  display: block;
+  width: 100% !important;
+  height: 1% !important;
+  background-color: #ccc !important;
+  border-radius: 4px !important;
+  border: 2px solid #00bfa5 !important;
+}
+.login-form span.input-text {
+  font-size: x-large !important;
+  color: #808080 !important;
+}
+
+.sign-up span.helptext {
+  font-size: 0 !important; /*  hide the help text */
+}
+.sign-up form input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"] {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: block;
+  width: 50% !important;
+  height: 20% !important;
+  background-color: #ccc !important;
+  border-radius: 4px !important;
+  border: 2px solid #00bfa5 !important;
+}
+.sign-up label {
+  color: #808080;
+  font-size: x-large;
+}
+.register-split {
+  height: 125%;
+  width: 50%;
+  position: relative;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+.register-right {
+  float: right;
+  transform: translate(25%);
+}
+.form-section {
+  position: relative !important;
+  height: 50% !important;
+}
+.blabla {
+  position: relative;
+}
+.activity-check-left {
+  display: inline-block;
+  position: relative !important;
+  top: inherit;
+  width: 50% !important;
+  height: 100% !important;
+}
+.activity-check-right {
+  display: block;
+  top: inherit;
+  height: 100%;
+  width: 30%;
+  margin-right: 5%;
+  position: relative !important;
+  z-index: 1;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+.activity-check-left .activity-form input[type="text"],
+select {
+  display: block !important;
+  width: 50% !important;
+  height: 20% !important;
+  background-color: #ccc !important;
+  border-radius: 4px !important;
+  border: 2px solid #00bfa5 !important;
+}
+.activity-check-right .activity-search-form input[type="text"] {
+  display: block !important;
+  width: 100% !important;
+  height: 20% !important;
+  background-color: #ccc !important;
+  border-radius: 4px !important;
+  border: 2px solid #00bfa5 !important;
+}
+
+.figure.center {
+  position: relative;
+  top: inherit;
+  height: 20%;
+}
+.figure.right {
+  position: inherit;
+  top: inherit;
+  height: 20%;
+  margin-right: 10%;
+}
+.profile_display,
+.profile_edit span {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+  font-size: large !important;
+  color: #ccc !important;
+}
+.profile_display span.info {
+  display: block !important;
+  text-align: left !important;
+  color: #ccc !important;
+}
+.profile_edit {
+  position: relative;
+  top: inherit;
+  margin-top: 10px !important;
+}
+.profile_edit .profile_form input[type="number"],
+.profile_form select {
+  display: inline-block !important;
+  width: 10% !important;
+  height: 20% !important;
+  background-color: #ccc !important;
+  border-radius: 4px !important;
+  border: 2px solid #00bfa5 !important;
+  margin-bottom: 10px;
+}
+
+.profile_edit .profile_form input[type="number"]::placeholder {
+  color: #333 !important;
+  font-size: 1em !important;
+  font-style: italic !important;
+  transition: color 0.3s ease !important;
+}
+.profile_edit .profile_form iinput[type="number"]:hover::placeholder {
+  color: transparent !important;
+}
+.profile_edit .profile_form input[type="number"]:focus::placeholder {
+  color: transparent;
+}
+.profile_edit .profile_form input[type="number"]::placeholder {
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.meal-name {
+  margin-top: 10px;
+}
+.meal-name span {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+  font-size: large !important;
+  color: #ccc !important;
+}
+.figures-pos-left {
+  position: relative;
+  top: inherit;
+  width: 40%;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.error-exercises p.paragraph {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: x-large;
+  color: #9e9e09;
+}
+
+.error-meal p.paragraph {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: large;
+  color: #9e9e09;
+}
+
+.error-meal-upload p.paragraph {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: large;
+  color: #9e9e09;
+}
+
+.error-meal-login p.paragraph {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: xx-large;
+  color: #9e9e09;
+}
+
+.errorlist {
+  margin-top: 5px !important;
+  margin-bottom: 10px !important;
+  font-size: large !important;
+  color: #9e9e09 !important;
+}
+
+.suggestions span.highlighted-text {
+  color: #00bfa5 !important;
+  font-size: large;
+}
+.suggestions span.text {
+  margin-top: 10px;
+  display: block;
+  font-size: large;
+  color: #ccc;
+}
+.sug {
+  font-size: large;
+  color: #ccc;
+}

@@ -5,7 +5,7 @@
     <div class="nav z-depth-0">
         <div class="section center">
             <div class="header">
-                <a href="{% url 'rango:index' %}"><span class="left">Home</span></a>
+                <a href="{% url 'rango:homePage' %}"><span class="left">Home</span></a>
                 <a href="{% url 'rango:logout' %}"><span class="right">Log Out</span></a>
             </div>
             <h3 class="white-text center">- Activities -</h3>
@@ -42,12 +42,27 @@
         </div>
     </div>
     {% if error %}
-        <div class="error">
+        <div class="error-exercises">
             <p class="paragraph center">{{ error }}</p>
         </div>
     {% endif %}
-    <div class="figure center"></div>
 
+    {% if suggestions %}
+        <div class="suggestions left">
+            <span class="text">Suggestions:</span>
+            {% for suggestion in suggestions %}
+                <span class="sug"><span class="highlighted-text">Activity name: </span>{{ suggestion.activity }} , 
+                                  <span class="highlighted-text">MET: </span>{{ suggestion.MET }} , 
+                                  <span class="highlighted-text">Duration: </span>{{suggestion.Time }} , 
+                                  <span class="highlighted-text">Estimated Calories Burned: </span>{{ suggestion.Calories_burned }}
+                    <br />
+                </span>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div class="figure center"></div>
+    
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

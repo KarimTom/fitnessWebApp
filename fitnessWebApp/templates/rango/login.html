@@ -9,6 +9,12 @@
     </div>
     
     <div class="login-form centered">
+        <div class="error-meal-login" id="error-upload">
+            {%if error %}
+                <p class=paragraph center>{{ error }}</p>
+            {% endif %}
+        </div>
+
         <form class="login-class" id="login_form" method="post" action="{% url 'rango:login' %}">
             {% csrf_token %}
             <span class="input-text"> Username:</span>

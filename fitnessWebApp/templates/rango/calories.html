@@ -5,7 +5,7 @@
     <div class="nav z-depth-0">
         <div class="section center">
             <div class="header">
-                <a href="{% url 'rango:index' %}"><span class="left">Home</span></a>
+                <a href="{% url 'rango:homePage' %}"><span class="left">Home</span></a>
                 <a href="{% url 'rango:logout' %}"><span class="right">Log Out</span></a>
             </div>
             <h3 class="white-text center">- Nutrition -</h3>
@@ -56,6 +56,11 @@
             <input class="meal-upload" type="file" name="imageFile" />
             <input type="submit" name="submit" value="Upload" />
         </form>
+        <div class="error-meal-upload" id="error-upload">
+            {%if error %}
+                <p class=paragraph center>{{ error }}</p>
+            {% endif %}
+        </div>
     </div>
 
     <div class="meals-suggestions">
