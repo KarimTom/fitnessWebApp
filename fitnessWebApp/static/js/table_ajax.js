@@ -1,12 +1,12 @@
 $(document).on('submit', '#meal_input', function(e){
-    console.log("enter was pressed");
+
     e.preventDefault();
 
     $.ajax({
         type:'POST',
         url: 'create/',
         data:{
-            name: $('#meal-input').val(),
+            name: $('#meal-input').val(),           //the meal that the user has logged
             'csrfmiddlewaretoken': '{{ csrf_token }}',
         },
         success: function(response){
@@ -20,6 +20,7 @@ $(document).on('submit', '#meal_input', function(e){
 
                 var table = document.getElementById("my-Table");
 
+                //append the last meal to the table
                 var newRow = table.insertRow(table.length),
                 meal = newRow.insertCell(0),
                 protein = newRow.insertCell(1),
@@ -33,6 +34,7 @@ $(document).on('submit', '#meal_input', function(e){
 
                 table.appendChild(newRow);
 
+                //check the last meal's status
                 status_meal = "";
                 if(response.protein_flag != 0){
                     status_meal += "High Protein ";
@@ -53,6 +55,7 @@ $(document).on('submit', '#meal_input', function(e){
                         table.deleteRow(i);
                     }
 
+                    //if meal suggestions are provided, append them to table suggestions
                     for(let i = 0; i < response.food_sug.length; i++){
                         var newRow = table.insertRow(0),
                             meal = newRow.insertCell(0),
@@ -72,6 +75,7 @@ $(document).on('submit', '#meal_input', function(e){
                 }
             }
             else{
+                //error while logging the meal (i.e., bad input)
                 var errorDiv = document.getElementById("error");
                 console.log(errorDiv);
                 errorDiv.innerHTML = "<p class=paragraph center>"+ response.error; +"</p>"

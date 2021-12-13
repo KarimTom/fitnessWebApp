@@ -1,8 +1,9 @@
 var table = document.getElementById("my-Table");
 var table_sug = document.getElementById("meal-suggestions");
 
-console.log(meals_taken);
+//check if there are meal suggestions
 if ((typeof(meal_sug) !== "undefined")){
+    //meal suggestions exist -> append them to table of meal-suggestions
     for(let i = 0; i < meal_sug.length; i++){
         var newRow = table_sug.insertRow(0),
             meal = newRow.insertCell(0),
@@ -21,11 +22,13 @@ if ((typeof(meal_sug) !== "undefined")){
     }
 }
 
+//check if last_meal is logged
 if ((typeof(last_meal) != "undefined")){
-    console.log(last_meal);
+    console.log(last_meal)
     last_meal_html = document.getElementById("last_meal_name_value");
     last_meal_html.innerHTML = last_meal.name;
 
+    //check the status of meal (high in protein/high in carbs/ high in fat)
     status_meal = "";
     if(protein_flag != 0){
         status_meal += "High Protein ";
@@ -45,6 +48,7 @@ if ((typeof(last_meal) != "undefined")){
     console.log(fat_flag);
 }
 
+//append all the meals taken to the table of meals
 for(let i = 0; i < meals_taken.length; i++){
     var newRow = table.insertRow(table.length),
         meal = newRow.insertCell(0),

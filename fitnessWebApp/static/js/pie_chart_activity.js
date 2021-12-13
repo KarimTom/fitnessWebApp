@@ -1,48 +1,51 @@
 console.log(activities);
 
-const pie_dims = { height: 300, width: 400, radius: 150 }; 
-const pie_cent = { x: (pie_dims.width / 2 + 5), y: (pie_dims.height / 2 + 5)};
+const pieActivity_dims = { height: 300, width: 400, radius: 150 }; 
+const pieActivity_cent = { x: (pieActivity_dims.width / 2 + 5), y: (pieActivity_dims.height / 2 + 5)};
 const svg_space_width = 400;
 const svg_space_height = 150;
 const legendRectSize = 18;                                  
 const legendSpacing = 5;
 
-const svg_placement = pie_dims.width - 300
+const svg_placement = pieActivity_dims.width - 300
 
 // create svg container
 const svg = d3.select('.figure')
   .append('svg')
-  .attr('width', pie_dims.width + svg_space_width) //400
-  .attr('height', pie_dims.height + svg_space_height)
+  .attr('width', pieActivity_dims.width + svg_space_width) //400
+  .attr('height', pieActivity_dims.height + svg_space_height)
   .attr('transform', `translate(${svg_placement})`); 
 
-const graph_1 = svg.append('g')
-  .attr("transform", `translate(${pie_cent.x}, ${pie_cent.y})`);
-  // translates the graph_1 group to the middle of the svg container
+const graphActivity = svg.append('g')
+  .attr("transform", `translate(${pieActivity_cent.x}, ${pieActivity_cent.y})`);
+  // translates the graphActivity group to the middle of the svg container
 
-const pie_1 = d3.pie()
+const pieActivity = d3.pie()
   .sort(null)
   .value(d => d.calorie_burned);
-  // the value we are evaluating to create the pie_1 angles
+  // the value we are evaluating to create the pieActivity angles
 
-const arcPath_1 = d3.arc()
-  .outerRadius(pie_dims.radius)
-  .innerRadius(pie_dims.radius / 2);
 
-const colour_1 = d3.scaleOrdinal(d3['schemeSet3'])
+//assigning radius and dimensions for the arcs
+const arcPathActivity = d3.arc()
+  .outerRadius(pieActivity_dims.radius)
+  .innerRadius(pieActivity_dims.radius / 2);
 
-// join enhanced (pie) data to path elements
-const paths_1 = graph_1.selectAll('path')
-  .data(pie_1(activities));
+const colourActivity = d3.scaleOrdinal(d3['schemeSet3'])
+
+// join enhanced (pieActivity) data to path elements
+const paths_1 = graphActivity.selectAll('path')
+  .data(pieActivity(activities));
 
 console.log(paths_1)
 
-const arcTweenEnter_1 = (d) => {
+//draw the arc from an end angle and a start angle
+const arcTweenEnterActivity = (d) => {
     var i = d3.interpolate(d.endAngle-0.1, d.startAngle);
 
     return function(t){
         d.startAngle = i(t);
-        return arcPath_1(d);
+        return arcPathActivity(d);
     }
 }
 
@@ -51,26 +54,27 @@ paths_1.enter()
     .attr('class', 'arc')
     .attr('stroke', '#fff')
     .attr('stroke-width', 3)
-    .attr('fill', d => colour_1(d.data.calorie_burned))
+    .attr('fill', d => colourActivity(d.data.calorie_burned))
+    //draw the arc in 1.5 seconds using arcTweenEnterActivity -> each interpolation give an end angle and a start angle to update the arc in 1.5 seconds
     .transition().duration(1500)
-      .attrTween("d", arcTweenEnter_1);
+      .attrTween("d", arcTweenEnterActivity);
 
-var pieLegends_1 = svg.selectAll('.legend')                     
-  .data(colour_1.domain())                                   
+var pieActivityLegends_1 = svg.selectAll('.legend')                     
+  .data(colourActivity.domain())                                   
   .enter()                                                
   .append('g')                                            
   .attr('class', 'legend')                                
   .attr('transform', function(d, i) {
-    return `translate(${pie_dims.width + legendSpacing}, ${i * 30})`;
+    return `translate(${pieActivity_dims.width + legendSpacing}, ${i * 30})`;
   });        
 
-pieLegends_1.append('rect')                                     
+pieActivityLegends_1.append('rect')                                     
   .attr('width', legendRectSize)                          
   .attr('height', legendRectSize)                         
-  .style('fill', colour_1)                                   
-  .style('stroke', colour_1);                                
+  .style('fill', colourActivity)                                   
+  .style('stroke', colourActivity);                                
           
-pieLegends_1.append('text')
+pieActivityLegends_1.append('text')
     .attr('x', legendRectSize + legendSpacing)              
     .attr('y', legendRectSize - legendSpacing)              
     .text(function(d) {

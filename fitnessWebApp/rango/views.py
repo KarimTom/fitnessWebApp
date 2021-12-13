@@ -1011,7 +1011,10 @@ def get_activity_suggestions(calorie_surplus, weight):
                 }
             print('Activity:')
             print(dict)
-            suggestions.append(dict)
+            if len(suggestions) < 5:
+                suggestions.append(dict)
+            else:
+                break
 
         if len(suggestions) != 0:
             break
