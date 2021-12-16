@@ -10,6 +10,14 @@ To launch this project, you will need to have the following mentioned libraries:
 - Django_extensions **3.1.5** (e.g., pip install Django_extensions==3.1.5)
 - Tensorflow **2.7.0** (e.g., pip install Tensorflow==2.7.0)
 - Pillow **8.4.0** (e.g., pip install Pillow==8.4.0)
+  
+# Running the application:
+
+To run the project on the device, execute the following commands:
+- python manage.py makemigration
+- python manage.py migrate --run-syncdb
+- python save_activities_db.py (**connect to fitnescalculator API and save all the activities in the database**)
+- python manage.py runserver (**VGG16 will be downloaded if this device is running this project for the first time, then it will run**)
 
 ## Demo:
 
