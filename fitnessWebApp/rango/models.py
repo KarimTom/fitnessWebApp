@@ -1,17 +1,10 @@
 from django.db import models
-from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
 import requests
-from datetime import date
 from django.utils import timezone
-from django.db.models.fields import NullBooleanField
+from rango import api_keys
 
 url_nutrition_analysis = "https://api.edamam.com/api/nutrition-data"
-headers_nutrition_analysis = {
-    'app_id': "c5cfcfef",
-    'app_key': "9185b3aa75ac918cab425d8adc84e9a9"
-}
 
 url_calorie_track = "https://fitness-calculator.p.rapidapi.com/burnedcalorie"
 headers = {
@@ -152,14 +145,14 @@ class Profile_food(models.Model):
             if any(char.isdigit() for char in self.meal):
                 
                 #Nutrtion Analysis API with the following parameters
-                querystring = {"app_id": headers_nutrition_analysis['app_id'],
-                               "app_key": headers_nutrition_analysis['app_key'],
+                querystring = {"app_id": api_keys.headers_nutrition_analysis['app_id'],
+                               "app_key": api_keys.headers_nutrition_analysis['app_key'],
                                "ingr": self.meal
                                }
             else:
                 #Nutrition Analysis API with default size of 100 gr
-                querystring = {"app_id": headers_nutrition_analysis['app_id'],
-                               "app_key": headers_nutrition_analysis['app_key'],
+                querystring = {"app_id": api_keys.headers_nutrition_analysis['app_id'],
+                               "app_key": api_keys.headers_nutrition_analysis['app_key'],
                                "ingr": '100 gr ' + str(self.meal)
                                }
 

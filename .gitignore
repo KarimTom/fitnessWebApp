@@ -10,4 +10,5 @@ Thumbs.db
 .jpeg
 fitnessWebApp/env/
 media/
-fitnessWebApp/rango/api_keys
+fitnessWebApp/rango/api_keys.py
+static/

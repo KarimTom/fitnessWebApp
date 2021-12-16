@@ -1,6 +1,6 @@
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.http.response import JsonResponse
-from django.views import View
+# from django.views import View
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -8,17 +8,16 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from rango.models import Activities, ActivityCategory, Food, Profile_food, Profile_activity, PostFood, UserProfile, PostActivities
+from rango.models import Activities, ActivityCategory, Profile_food, Profile_activity, PostFood, UserProfile, PostActivities
 from rango.forms import UserForm, UserProfileForm, ProfileForm, SelectExerciseForm, SelectExerciseSearchForm
-from django.utils import timezone
+from rango import api_keys
+# from django.utils import timezone
 from datetime import date, datetime, timedelta
-from django.db import connections
-import json
-import requests
-import random
-import tensorflow.compat.v1 as tf
+# from django.db import connections
+import json, requests, random
+# import tensorflow.compat.v1 as tf
 import numpy as np
-from keras import backend as K
+# from keras import backend as K
 from keras.applications import vgg16
 from keras.applications.imagenet_utils import decode_predictions
 from keras.preprocessing.image import img_to_array, load_img
@@ -27,17 +26,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.datastructures import MultiValueDictKeyError
 
 url_food_database = "https://api.edamam.com/api/food-database/v2/parser"
-headers_food_database = {
-    'app_id': "3ac2ff31",
-    'app_key': "1726dd8e46e8e8027369ba1fc0054a41"
-}
 
 url_nutrition_analysis = "https://api.edamam.com/api/nutrition-data"
-headers_nutrition_analysis = {
-    'app_id': "c5cfcfef",
-    'app_key': "9185b3aa75ac918cab425d8adc84e9a9"
-}
-
 
 def about(request):
     logout(request)
@@ -93,6 +83,12 @@ def homePage(request):
         context_dict['nutrients_info'] = nutrients_json
         context_dict['calories_info'] = calories_json
         
+        print('nutrients:') 
+        print(nutrients_json)
+
+        print('calories')
+        print(calories_json)
+
     return render(request, 'rango/homePage.html', context=context_dict)
 
 
@@ -112,18 +108,22 @@ def user_login(request):
             ##check if the account is active or disabled
             if user.is_active:
                 login(request, user)
+                print('Welcome!', user)
                 return redirect(reverse('rango:homePage'))
             else:
+                print('account is disabled')
                 return HttpResponse("Your account is disabled.")
         ##invalid login
         else:
             context_dict['error'] = 'Invalid Login!'
+            print('Invalid Login')
             
     return render(request, 'rango/login.html', context=context_dict)
 
 
 ##User logging out
 def user_logout(request):
+    print('Logging out...')
     logout(request)
     return redirect(reverse('rango:about'))
 
@@ -197,17 +197,31 @@ def register(request):
             registered = True
 
             context_dict['BMR'] = BMR
+            print('BMR:', BMR)
+
             context_dict['age'] = info_user_profile.age
+            print('age:', info_user_profile.age)
+
             context_dict['weight'] = info_user_profile.weight
+            print('weight:', info_user_profile.weight)
+
             context_dict['height'] = info_user_profile.height
+            print('height:', info_user_profile.height)
+
             context_dict['BMI'] = info_user_profile.BMI
+            print('BMI:', info_user_profile.BMI)
+
             context_dict['calorie_goal'] = info_profile_food.calorie_goal
+            print('calorie goal:', info_profile_food.calorie_goal)
+
         ##Error in registering - Invalid field somewhere for instance
         else:
+            print('Error while registering!')
             print(user_form.errors, profile_form.errors,
                   user_profile_form.errors)
     ##Displaying Forms for Registering
     else:
+        print('Displaying Forms')
         user_form = UserForm()
         user_profile_form = UserProfileForm()
         profile_form = ProfileForm()
@@ -220,6 +234,7 @@ def register(request):
 
 ##Profile page - Displays the user's information and allow the user to edit their info
 def profile(request):
+    print('Profile Page')
     context_dict = {}
 
     user_profile = UserProfile.objects.get(user=request.user) 
@@ -230,26 +245,42 @@ def profile(request):
         .last()
 
     context_dict['gender'] = user_profile.gender
+    print('gender', user_profile.gender)
+
     context_dict['BMR'] = user_profile.BMR
+    print('BMR:', user_profile.BMR)
+
     context_dict['BMI'] = user_profile.BMI
+    print('BMI:', user_profile.BMI)
 
     context_dict['age'] = user_profile.age
+    print('age:', user_profile.age)
+
     context_dict['weight'] = user_profile.weight
+    print('weight:', user_profile.weight)
+
     context_dict['height'] = user_profile.height
+    print('height:', user_profile.height)
+
     context_dict['goal'] = user_profile.goal.upper()
-    
+    print('goal:', user_profile.goal)
     
     context_dict['calorie_goal'] = profile_food['calorie_goal']
+    print('calorie goal:', profile_food['calorie_goal'])
 
     if request.method == 'POST':
         if request.POST['age']:
             user_profile.age = int(request.POST['age'])
+            print('Changed age -> new age: ', user_profile.age)
         if request.POST['weight']:
             user_profile.weight = int(request.POST['weight'])
+            print('Changed weight -> new weight: ', user_profile.weight)
         if request.POST['height']:
             user_profile.height = int(request.POST['height'])
+            print('Changed height -> new height: ', user_profile.height)
         else:
             user_profile.goal = request.POST['goal']
+            print('Changed goal -> new goal: ', user_profile.goal)
 
         user_profile.save()
         return redirect(reverse('rango:profile'))
@@ -261,7 +292,8 @@ bad_input_error_exercises = False
 
 ##Exercise Page - User logs a form or search through a database, and visualise the activities logged with the estimated calories burned
 ##                Through a Pie Chart
-def exercises(request):
+def activities(request):
+    print('In Activities page')
     context_dict = {}
 
     loggedInUser_activity = Profile_activity.objects.filter(person=request.user).last()
@@ -287,10 +319,13 @@ def exercises(request):
             dict = {'name': each_activity['description'], 'calorie_burned': int(each_activity['calorie_amount']),
                     'unit': each_activity['calorie_unit'], 'duration': each_activity['time_min']}
             li_activities.append(dict)
+        print('calories burned -> ', calorie_burned)
 
         #JSON the activities performed for Javascript
         activities_json = json.dumps(li_activities)
         context_dict['activities_info'] = activities_json
+        print('activities done: ')
+        print(activities_json)
 
         user_fitness_goal = loggedInUser_profile.goal
         calorie_goal = loggedInUser_food.calorie_goal
@@ -311,6 +346,9 @@ def exercises(request):
             
             #If User burned calorie less than the calorie_surplus required to burn -> suggest activities
             if calorie_burned < calorie_surplus:
+                calorie_surplus = calorie_surplus - calorie_burned
+
+                print('calories to burn ->', calorie_surplus)
                 activity_suggestions = get_activity_suggestions(calorie_surplus, user_weight)
                 activity_suggestions_json = json.dumps(activity_suggestions)
                 context_dict['suggestions'] = activity_suggestions_json
@@ -324,6 +362,9 @@ def exercises(request):
                 calorie_surplus = calorie_surplus + (calorie_consumed_day - calorie_goal)
 
             if calorie_burned < calorie_surplus:
+                calorie_surplus = calorie_surplus - calorie_burned
+
+                print('calories to burn ->', calorie_surplus)
                 activity_suggestions = get_activity_suggestions(calorie_surplus, user_weight)
                 activity_suggestions_json = json.dumps(activity_suggestions)
                 context_dict['suggestions'] = activity_suggestions_json
@@ -337,6 +378,9 @@ def exercises(request):
                 calorie_surplus = calorie_surplus + (calorie_consumed_day - calorie_goal)
 
             if calorie_burned < calorie_surplus:
+                calorie_surplus = calorie_surplus - calorie_burned
+
+                print('calories to burn ->', calorie_surplus)
                 activity_suggestions = get_activity_suggestions(calorie_surplus, user_weight)
                 activity_suggestions_json = json.dumps(activity_suggestions)
                 context_dict['suggestions'] = activity_suggestions
@@ -345,16 +389,17 @@ def exercises(request):
         #Check for Error when user logging the activity
         global bad_input_error_exercises
         if bad_input_error_exercises == True:
+            print('Bad input!!!')
             context_dict['error'] = 'That doesn''t seem right! Try filling out the form on the left'
             bad_input_error_exercises = False
             
-    return render(request, 'rango/exercises.html', context=context_dict)
+    return render(request, 'rango/activities.html', context=context_dict)
 
 ##bad input flag for photo recognition
 bad_input_photo_recognition = False
 
-##Calories Page - User logs their meal either by typing or using meal photo recognition
-def calories(request):
+##Nutrition Page - User logs their meal either by typing or using meal photo recognition
+def nutrition(request):
     context_dict = {}
     context_dict['last_meal'] = None
     context_dict['food_sug'] = None
@@ -366,6 +411,7 @@ def calories(request):
     if request.user.is_authenticated:
         global bad_input_photo_recognition
         if bad_input_photo_recognition == True:
+            print('Photo was not recognised as a meal!!!')
             context_dict['error'] = 'That doesn''t seem to be a meal! Try again'
             bad_input_photo_recognition = False
 
@@ -377,13 +423,9 @@ def calories(request):
 
         #Fetches all the meals taken in this day
         meals_taken = PostFood.objects.filter(profile=loggedInUser_food)
-        print("meals taken for ", loggedInUser_food.person.username, meals_taken)
         #Fetches last meal
         last_meal = PostFood.objects.filter(profile=loggedInUser_food).last()
         
-        print('last meal:')
-        print(last_meal)
-
         file = None
 
         #User uploaded a photo for meal photo recognition
@@ -407,7 +449,6 @@ def calories(request):
                 
                 #predict the category of the photo (e.g., what meal it is - pizza, donut, etc..)
                 predictions = settings.IMAGE_MODEL.predict(processed_image)
-                print(predictions)
                     
                 labels = decode_predictions(predictions, top=5)
 
@@ -421,22 +462,26 @@ def calories(request):
                             type_predicted = ''
                             for strings in filter_string:
                                 type_predicted += strings + ' '
-                                print(type_predicted)
+                                print('photo predicted: ', type_predicted)
                         #Call API Nutrition Analysis with parameters
-                        querystring = {"app_id": headers_nutrition_analysis['app_id'],
-                                    "app_key": headers_nutrition_analysis['app_key'],
+                        querystring = {"app_id": api_keys.headers_nutrition_analysis['app_id'],
+                                    "app_key": api_keys.headers_nutrition_analysis['app_key'],
                                     "ingr": "100 gr " +type_predicted
                                     }
                         response = requests.request("GET", url_nutrition_analysis, params=querystring).json()
-                        print(response)
 
                         #If picture is a food -> save
                         if response['calories'] != 0:
-                            print("type predicted is: " ,type_predicted)
-                            print(response)
+                            print("meal predicted: " ,type_predicted)
+
+                            print("Energy: " +str(response['totalNutrients']['ENERC_KCAL']['quantity']))
+                            print("Protein: " +str(response['totalNutrients']['PROCNT']['quantity']))
+                            print("Carbs: " +str(response['totalNutrients']['CHOCDF']['quantity']))
+                            print("Fat: " +str(response['totalNutrients']['FAT']['quantity']))
+
                             loggedInUser_food.meal = type_predicted
                             loggedInUser_food.save()
-                            return redirect(reverse('rango:calories'))
+                            return redirect(reverse('rango:nutrition'))
                         else:
                             context_dict['predictions'] = type_predicted
 
@@ -455,6 +500,8 @@ def calories(request):
                         }
                 last_meal_json = json.dumps(dict)
                 context_dict['last_meal'] = last_meal_json
+                
+                print('last meal: ')
                 print(last_meal_json)
 
                 calories = last_meal.food.calorie
@@ -532,10 +579,12 @@ def calories(request):
                 dict_list.append(dict)
 
             meals = json.dumps(dict_list)
+            
+            print('meals taken: ')
             print(meals)
             context_dict['meals'] = meals                    
 
-    return render(request, 'rango/calories.html', context=context_dict)
+    return render(request, 'rango/nutrition.html', context=context_dict)
 
 ##Processing the activity logged by the User
 def activity_process(request):
@@ -554,7 +603,7 @@ def activity_process(request):
         except Activities.DoesNotExist:
             global bad_input_error_exercises
             bad_input_error_exercises = True
-            return redirect(reverse('rango:exercises'))
+            return redirect(reverse('rango:activities'))
 
     #input was correct -> further processing
     time_in_min = request.POST['Time_in_min']
@@ -569,7 +618,7 @@ def activity_process(request):
 
     #Saving the activity logged by the user
     loggedInUser_activity.save()
-    return redirect(reverse('rango:exercises'))
+    return redirect(reverse('rango:activities'))
 
 ##Processing the meal logged by the user - done through an ajax request 
 @csrf_exempt
@@ -669,7 +718,7 @@ def meal_process(request):
 ##Auto complete to help the user in searching the activity database easily
 @csrf_exempt
 def auto_complete_function(request):
-    qs = Activities.objects.filter(api_description__icontains=request.GET['term'])
+    qs = Activities.objects.filter(api_description__startswith=request.GET['term'])
     descs = list()
     for desc in qs:
         descs.append(desc.api_description)
@@ -875,8 +924,8 @@ def get_food_suggestions(calories,
     #generic meals is the best category to search for good quality food according to Food Database API
     try:
         querystring = {
-                    "app_id": headers_food_database['app_id'],
-                    "app_key": headers_food_database['app_key'],
+                    "app_id": api_keys.headers_food_database['app_id'],
+                    "app_key": api_keys.headers_food_database['app_key'],
                     "ingr": "..",
                     "category": ["generic-meals"],
                     "nutrients[CHOCDF]": carb_qtity,
@@ -888,16 +937,15 @@ def get_food_suggestions(calories,
         response = requests.request(
                         "GET", url_food_database, params=querystring).json()
 
-        print(response)
 
         n = random.sample(range(0, len(response['hints'])-1), 5)
-        print(n)
     #No Food found for this category - Try with all categories to expand the search (generic food, generic meals, fast food, etc..)
     except ValueError:
+        print('no food with category -generic meals- found -> expanding search...')
         try:
             querystring = {
-                        "app_id": headers_food_database['app_id'],
-                        "app_key": headers_food_database['app_key'],
+                        "app_id": api_keys.headers_food_database['app_id'],
+                        "app_key": api_keys.headers_food_database['app_key'],
                         "ingr": "..",
                         "nutrients[CHOCDF]": carb_qtity,
                         "nutrients[PROCNT]": protein_qtity,
@@ -908,15 +956,14 @@ def get_food_suggestions(calories,
             response = requests.request(
                             "GET", url_food_database, params=querystring).json()
 
-            print(response)
 
             n = random.sample(range(0, len(response['hints'])-1), 5)
-            print(n)
         #No Food found - Try to expand the search by extending the range of all macros.
         except ValueError:
+            print('no food with specific macros found -> expanding search...')
             querystring = {
-                        "app_id": headers_food_database['app_id'],
-                        "app_key": headers_food_database['app_key'],
+                        "app_id": api_keys.headers_food_database['app_id'],
+                        "app_key": api_keys.headers_food_database['app_key'],
                         "ingr": "..",
                         "nutrients[CHOCDF]": str(0) + "-" + str(max_carb_gr),
                         "nutrients[PROCNT]": str(0) + "-" + str(max_protein_gr),
@@ -927,13 +974,12 @@ def get_food_suggestions(calories,
             response = requests.request(
                             "GET", url_food_database, params=querystring).json()
 
-            print(response)
 
             #Shuffling through the list of food fetched - distinct shuffle
             n = random.sample(range(0, len(response['hints'])-1), 5)
-            print(n)
 
     food_list = []
+    print('food suggested...')
     #printing each food selected with the shuffle
     for i in n:
         print(response['hints'][i])

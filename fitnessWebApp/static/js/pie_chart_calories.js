@@ -14,7 +14,7 @@ const svg = d3.select('.canvas')
   .attr('height', pieCalories_dims.height + svg_space_height);
 
 const graphCalories = svg.append('g')
-  .attr("transform", `translate(${pie_cent.x}, ${pie_cent.y})`);
+  .attr("transform", `translate(${pieCalories_cent.x}, ${pieCalories_cent.y})`);
   // translates the graphCalories group to the middle of the svg container
 
 const pieCalories = d3.pie()
