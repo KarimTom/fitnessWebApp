@@ -8,3 +8,6 @@ migrations/
 Thumbs.db
 .jpg
 .jpeg
+fitnessWebApp/env/
+media/
+fitnessWebApp/rango/api_keys
